@@ -1,9 +1,0 @@
-[build]
-  command = "#"
-  functions = "netlify/functions"
-  publish = "public"
-
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/comment/:splat"
-  status = 200
