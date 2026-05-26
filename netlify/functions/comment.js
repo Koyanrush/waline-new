@@ -1,18 +1,20 @@
-const { Server } = require('@waline/vercel');
+// 既然缓存里是 V3，那我们就彻底顺从 V3 的语法，绝对不使用 new Server
+const { createServer } = require('@waline/vercel');
 
-const waline = new Server({
+// 直接把数据库对象硬编码传进去，彻底无视 Netlify 的环境变量系统
+const waline = createServer({
   db: 'postgres',
   dbConfig: {
     dialect: 'postgres',
     host: 'aws-1-ap-southeast-1.pooler.supabase.com',
     port: 6543,
     username: 'postgres.hsuhbblpodwkxzxmqbbc',
-    password: 'pY@.$GwntmikTS9', // 经典版直连，这里直接放原始密码，完全不需要转义
+    password: 'pY@.$GwntmikTS9', // 原始密码，不需要任何 URL 转义
     database: 'postgres',
     ssl: { rejectUnauthorized: false },
     schema: 'public'
   }
 });
 
-// 经典版在 Netlify 上的专属导出接口
-exports.handler = waline.netlify;
+// 直接导出这个处理函数
+exports.handler = waline;
