@@ -1,9 +1,9 @@
 {
   "name": "waline-vercel",
-  "version": "3.0.0",
-  "description": "Waline server deployed on Vercel",
+  "version": "1.0.0",
+  "description": "Waline classic server for Vercel",
   "main": "api/comment.js",
   "dependencies": {
-    "@waline/vercel": "^3.4.1"
+    "@waline/vercel": "1.39.3"
   }
 }
