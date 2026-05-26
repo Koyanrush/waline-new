@@ -1,38 +1,19 @@
-// 强行注入环境变量，彻底堵死 Waline 底层的校验错误
-process.env.W_DB = 'postgres';
-process.env.NETLIFY = 'true';
-process.env.DATABASE_URL = 'postgresql://postgres.hsuhbblpodwkxzxmqbbc:pY%40.$GwntmikTS9@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true';
+const { Server } = require('@waline/cloud');
 
-const walineNext = require('@waline/vercel');
-
-const dbConfig = {
+// 纯净配置，直接跳过任何平台的环境变量扫描
+const waline = new Server({
   db: 'postgres',
   dbConfig: {
     dialect: 'postgres',
     host: 'aws-1-ap-southeast-1.pooler.supabase.com',
     port: 6543,
     username: 'postgres.hsuhbblpodwkxzxmqbbc',
-    password: 'pY@.$GwntmikTS9',
+    password: 'pY@.$GwntmikTS9', // 独立包不需要转义，直接用原始密码
     database: 'postgres',
     ssl: { rejectUnauthorized: false },
     schema: 'public'
   }
-};
+});
 
-let handler;
-
-try {
-  if (typeof walineNext.createServer === 'function') {
-    handler = walineNext.createServer(dbConfig);
-  } else if (walineNext.default && typeof walineNext.default.createServer === 'function') {
-    handler = walineNext.default.createServer(dbConfig);
-  } else if (typeof walineNext === 'function') {
-    handler = walineNext(dbConfig);
-  } else {
-    handler = async () => ({ statusCode: 500, body: "Waline core mismatch" });
-  }
-} catch (err) {
-  handler = async () => ({ statusCode: 500, body: err.message });
-}
-
-exports.handler = handler;
+// 导出 Netlify 云函数标准的 handler
+exports.handler = waline.netlify;
