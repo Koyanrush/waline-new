@@ -1,35 +1,35 @@
 const walineNext = require('@waline/vercel');
 
+// 直接在代码里定义，不走环境变量
+const dbConfig = {
+  db: 'postgres',
+  // 完美拼接你的所有 Supabase 数据库信息
+  dbConfig: {
+    dialect: 'postgres',
+    host: 'aws-1-ap-southeast-1.pooler.supabase.com',
+    port: 6543,
+    username: 'postgres.hsuhbblpodwkxzxmqbbc',
+    password: 'pY@.$GwntmikTS9', // 在代码里不需要转义，直接写原始密码
+    database: 'postgres',
+    ssl: { rejectUnauthorized: false },
+    schema: 'public'
+  }
+};
+
 let handler;
 
 try {
-  // 1. 尝试 V3 官方的标准工厂函数
   if (typeof walineNext.createServer === 'function') {
-    handler = walineNext.createServer({ db: 'postgres' });
-  } 
-  // 2. 尝试某些打包环境下可能出现的 default 嵌套
-  else if (walineNext.default && typeof walineNext.default.createServer === 'function') {
-    handler = walineNext.default.createServer({ db: 'postgres' });
-  } 
-  // 3. 尝试直接把引入的模块当作函数执行（V2 或部分云函数包装形式）
-  else if (typeof walineNext === 'function') {
-    handler = walineNext({ db: 'postgres' });
-  } 
-  // 4. 终极兜底：直接抛出模块里到底有什么，抓出内鬼
-  else {
-    throw new Error(`Waline module keys: ${Object.keys(walineNext).join(', ')}. Type: ${typeof walineNext}`);
+    handler = walineNext.createServer(dbConfig);
+  } else if (walineNext.default && typeof walineNext.default.createServer === 'function') {
+    handler = walineNext.default.createServer(dbConfig);
+  } else if (typeof walineNext === 'function') {
+    handler = walineNext(dbConfig);
+  } else {
+    handler = async () => ({ statusCode: 500, body: "Waline core mismatch" });
   }
 } catch (err) {
-  handler = async (event, context) => {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: "Waline Initialization Failed",
-        message: err.message,
-        stack: err.stack
-      })
-    };
-  };
+  handler = async () => ({ statusCode: 500, body: err.message });
 }
 
 exports.handler = handler;
