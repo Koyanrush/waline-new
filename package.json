@@ -1,9 +1,9 @@
 {
   "name": "waline-netlify",
   "version": "1.0.0",
-  "description": "An Waline starter repository for deploy to netlify.com",
+  "description": "Waline server on Netlify with pure cloud core",
   "main": "index.js",
   "dependencies": {
-    "@waline/vercel": "^1.39.3"
+    "@waline/cloud": "^3.4.1"
   }
 }
