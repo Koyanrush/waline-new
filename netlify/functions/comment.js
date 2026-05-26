@@ -1,23 +1,35 @@
-const WalineModule = require('@waline/vercel');
+const walineNext = require('@waline/vercel');
 
-// 自动兼容 V2 和 V3 的不同导出结构
-const createServer = WalineModule.createServer || WalineModule.default?.createServer;
-const Server = WalineModule.Server || WalineModule.default?.Server;
+let handler;
 
-let walineHandler;
-
-if (typeof createServer === 'function') {
-  // 新版 V3 架构
-  walineHandler = createServer({ db: 'postgres' });
-} else if (typeof Server === 'function') {
-  // 旧版 V2 架构
-  walineHandler = new Server({ db: 'postgres' }).netlify;
-} else if (typeof WalineModule === 'function') {
-  // 备用直接运行架构
-  walineHandler = WalineModule({ db: 'postgres' });
-} else {
-  // 终极兜底，直接把整个模块作为函数尝试
-  walineHandler = typeof WalineModule.netlify === 'function' ? WalineModule.netlify : WalineModule;
+try {
+  // 1. 尝试 V3 官方的标准工厂函数
+  if (typeof walineNext.createServer === 'function') {
+    handler = walineNext.createServer({ db: 'postgres' });
+  } 
+  // 2. 尝试某些打包环境下可能出现的 default 嵌套
+  else if (walineNext.default && typeof walineNext.default.createServer === 'function') {
+    handler = walineNext.default.createServer({ db: 'postgres' });
+  } 
+  // 3. 尝试直接把引入的模块当作函数执行（V2 或部分云函数包装形式）
+  else if (typeof walineNext === 'function') {
+    handler = walineNext({ db: 'postgres' });
+  } 
+  // 4. 终极兜底：直接抛出模块里到底有什么，抓出内鬼
+  else {
+    throw new Error(`Waline module keys: ${Object.keys(walineNext).join(', ')}. Type: ${typeof walineNext}`);
+  }
+} catch (err) {
+  handler = async (event, context) => {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: "Waline Initialization Failed",
+        message: err.message,
+        stack: err.stack
+      })
+    };
+  };
 }
 
-exports.handler = walineHandler;
+exports.handler = handler;
