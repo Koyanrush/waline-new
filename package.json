@@ -1,9 +1,12 @@
 {
   "name": "waline-vercel",
-  "version": "1.0.0",
-  "description": "Waline classic server for Vercel",
+  "version": "3.0.0",
+  "description": "Waline server deployed on Vercel",
   "main": "api/comment.js",
+  "scripts": {
+    "vc-env": "echo 'Injecting env during build phase'"
+  },
   "dependencies": {
-    "@waline/vercel": "1.39.3"
+    "@waline/vercel": "^3.4.1"
   }
 }
