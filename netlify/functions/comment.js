@@ -1,6 +1,5 @@
-const { Server } = require('@waline/cloud');
+const { Server } = require('@waline/vercel');
 
-// 纯净配置，直接跳过任何平台的环境变量扫描
 const waline = new Server({
   db: 'postgres',
   dbConfig: {
@@ -8,12 +7,12 @@ const waline = new Server({
     host: 'aws-1-ap-southeast-1.pooler.supabase.com',
     port: 6543,
     username: 'postgres.hsuhbblpodwkxzxmqbbc',
-    password: 'pY@.$GwntmikTS9', // 独立包不需要转义，直接用原始密码
+    password: 'pY@.$GwntmikTS9', // 经典版直连，这里直接放原始密码，完全不需要转义
     database: 'postgres',
     ssl: { rejectUnauthorized: false },
     schema: 'public'
   }
 });
 
-// 导出 Netlify 云函数标准的 handler
+// 经典版在 Netlify 上的专属导出接口
 exports.handler = waline.netlify;
