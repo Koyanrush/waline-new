@@ -1,9 +1,9 @@
 {
   "name": "waline-netlify",
   "version": "1.0.0",
-  "description": "Waline server on Netlify with pure cloud core",
+  "description": "Waline classic server for Netlify",
   "main": "index.js",
   "dependencies": {
-    "@waline/cloud": "^3.4.1"
+    "@waline/vercel": "1.39.3"
   }
 }
