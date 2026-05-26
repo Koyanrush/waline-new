@@ -1,15 +1,18 @@
+// 强行注入环境变量，彻底堵死 Waline 底层的校验错误
+process.env.W_DB = 'postgres';
+process.env.NETLIFY = 'true';
+process.env.DATABASE_URL = 'postgresql://postgres.hsuhbblpodwkxzxmqbbc:pY%40.$GwntmikTS9@aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true';
+
 const walineNext = require('@waline/vercel');
 
-// 直接在代码里定义，不走环境变量
 const dbConfig = {
   db: 'postgres',
-  // 完美拼接你的所有 Supabase 数据库信息
   dbConfig: {
     dialect: 'postgres',
     host: 'aws-1-ap-southeast-1.pooler.supabase.com',
     port: 6543,
     username: 'postgres.hsuhbblpodwkxzxmqbbc',
-    password: 'pY@.$GwntmikTS9', // 在代码里不需要转义，直接写原始密码
+    password: 'pY@.$GwntmikTS9',
     database: 'postgres',
     ssl: { rejectUnauthorized: false },
     schema: 'public'
