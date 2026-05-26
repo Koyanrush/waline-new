@@ -1,7 +1,5 @@
-const { Server } = require('@waline/vercel');
+const { createServer } = require('@waline/vercel');
 
-const waline = new Server({
-  db: 'postgres',
+module.exports = createServer({
+  db: 'postgres'
 });
-
-module.exports = waline.netlify;
