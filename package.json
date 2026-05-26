@@ -4,7 +4,7 @@
   "description": "Waline server deployed on Vercel",
   "main": "api/comment.js",
   "scripts": {
-    "vc-env": "echo 'Injecting env during build phase'"
+    "build": "export POSTGRES_URL='postgresql://postgres.hsuhbblpodwkxzxmqbbc:pY%40.$GwntmikTS9@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres' && echo 'Env pre-injected successfully!'"
   },
   "dependencies": {
     "@waline/vercel": "^3.4.1"
